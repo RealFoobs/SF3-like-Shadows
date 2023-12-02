@@ -1,0 +1,7 @@
+[Info]
+prefix = ZH
+fx.scale = 1
+
+[Files]
+sff = shadows.sff
+air = shadows.air
