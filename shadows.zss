@@ -1,13 +1,16 @@
-#=========================================================================
+#=================================================================================================
 #	Scale based round shadows by Inktrebuchet
-#=========================================================================
+#=================================================================================================
 
 [Statedef 33333399; type: A; movetype: I; physics: N; ctrl: 0; velset: 0,0; anim: ZH8530; sprpriority: -6001;]
 ignorehitpause {
+
 	assertspecial{flag:noshadow}
-	
-	# keeps the shadow anchored to its parent
 	bindtoparent{time:1; facing:1; pos:0, -parent,pos y}
+	
+	# checks if the parent exists and if it should cast a shadow
+	if !playeridexist(parent,id) || parent,anim = -2 || parent,isasserted(invisible) || parent,isasserted(noshadow) || parent,animframe(group) = -1 || parent,animframe(image) = -1 {destroyself{}}
+	else {assertspecial{flag:noshadow; redirectid:parent,id;}}
 	
 	# vertical position of parent, adjusted by localcoord
 	let py = abs(parent,pos y)/const240p(1);
@@ -15,11 +18,13 @@ ignorehitpause {
 	let ht = 96;
 	# rough measure of the parent's horizontal size, adjusted by localcoord
 	let si = const240p(100.0)/(const(size.ground.back) + const(size.ground.front))*(const(size.xscale));
+	# character specific scaling factor, if defined
+	let sc = cond(parent,map(shadow_scale),parent,map(shadow_scale),1);
 	
 	# controls the shape of character shadows
-	if !parent,ishelper {angledraw{scale:((.47 - (((.47/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .6)/$si * 2, ((.3 - (((.3/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .8)/$si * 2}}
+	if !parent,ishelper {angledraw{scale:((.47 - (((.47/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .6)/$si * 2 * $sc, ((.3 - (((.3/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .8)/$si * 2 * $sc}}
 	# controls the shape of helper shadows
-	else {angledraw{scale:(.47 - (((.47/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .6 + (-0.3), (.3 - (((.3/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .8 + (-0.3)}}
+	else {angledraw{scale:(.47 - (((.47/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + (.6 * $sc) + (-0.3), (.3 - (((.3/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + (.8 * $sc) + (-0.3)}}
 
 	# this controls the opacity of shadows
 	let al = 80; # minimum alpha source
@@ -33,6 +38,7 @@ ignorehitpause {
 	if parent,alpha source < $al {let al = parent,alpha source;}
 	if parent,alpha dest > (256-$al) {let al = 256-parent,alpha dest;}
 	trans{trans:addalpha; alpha:$al,256-$al}
+
 	}
 	
 [Statedef -4]
@@ -51,11 +57,6 @@ ignorehitpause {
 		size.ground.back:const(size.ground.back);
 		size.ground.front:const(size.ground.front);
 			}
-		}
-		
-	if ishelper && stateno = 33333399 {
-		if !playeridexist(parent,id) || parent,anim = -2 || parent,isasserted(invisible) || parent,isasserted(noshadow) || parent,animframe(group) = -1 || parent,animframe(image) = -1 {destroyself{}}
-		else {assertspecial{flag:noshadow; redirectid:parent,id;}}
 		}
 	}
 	
