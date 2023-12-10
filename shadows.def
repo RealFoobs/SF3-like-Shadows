@@ -1,6 +1,6 @@
 [Info]
 prefix = ZH
-fx.scale = 1
+fx.scale = 1; 1
 
 [Files]
 sff = shadows.sff
