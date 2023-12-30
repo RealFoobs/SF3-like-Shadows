@@ -1,3 +1,4 @@
+A system to replace Ikemen's default shadows for rounder shadows similar to those present in Capcom games like SFIII. This is based of MFG user [inktrebuchet's mugen code](https://mugenguild.com/forum/topics/round-shadows-based-sf3-198646.0.html).
 
 **To install**
 
