@@ -38,3 +38,12 @@ You just need to add my files so the engine can read them:
 	],
   ```
   The order isn't very relevant, just make sure to include a comma if either file is NOT the last the last line on the block, and to ommit it if it isn't.
+
+**Note**
+
+The shadow fx will look comically undersized if you're using a screenpack with localcoord higher than 320x240. Go to `shadows\shadows.def` and change the following:
+```
+[Info]
+prefix = ZH
+fx.scale = 1; 1 for 320x240, 2 for 640x480, 4 for 1280x720...
+```
