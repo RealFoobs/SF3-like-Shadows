@@ -5,6 +5,11 @@
 let f = 0;
 if anim != -2 && !isasserted(invisible) && !isasserted(noshadow) && !isasserted(nobg) && !isasserted(nofg) && animframe(group) != -1 && animframe(image) != -1 {let f = 1;}
 
+[function sprite()s]
+let s = 0;
+if movetype = H && statetype = L {let s = 0.60;}
+else if movetype = H && statetype = A {let s = 0.30;}
+
 [Statedef +1]
 
 	# vertical position, adjusted by localcoord
@@ -15,6 +20,8 @@ let ht = 96;
 let si = const240p(100.0)/(const(size.ground.back) + const(size.ground.front))*(const(size.xscale));
 	# character specific scaling factor, if defined
 let sc = cond(map(shadow_scale), map(shadow_scale), 1);
+	# checks if the shadow should be stretched to account for gethits
+let spr = call sprite();
 	# default scale for helper shadows
 let d = 0.6;
 
@@ -50,8 +57,9 @@ if teamside && $f && (ishelper || !numexplod(33333399)) {
 	
 	# removes the shadow explod, if necessary
 if $f = 0 {removeexplod{id:33333399}}
+if ishelper && (isasserted(nofg) || isasserted(nobg)) {removeexplod{id:33333399; redirectid:root,id;}}
 
-	# workaround for localcoord discrepancies
+	# temporary workaround for localcoord discrepancies
 if incustomstate {removeexplod{id:33333399}}
 
 if numexplod(33333399) {
@@ -61,11 +69,11 @@ if numexplod(33333399) {
 	modifyexplod{
 		id:33333399; 
 		postype:left;
-		scale:((.47 - (((.47/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .6)/$si * 2 * $sc * $za, ((.3 - (((.3/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .8)/$si * 2 * $sc * $za;
+		scale:((.47 - (((.47/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .6)/$si * 2 * $sc * $za * (1+$spr), ((.3 - (((.3/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .8)/$si * 2 * $sc * $za;
 		pos:ceil((screenpos x)*$za), ceil((screenpos y - pos y)*$za);
 		trans:addalpha;
 		alpha:$al,256-$al;
 		}
 	}
 
-assertspecial{flag:noshadow;}
+ignorehitpause {assertspecial{flag:noshadow;}}
