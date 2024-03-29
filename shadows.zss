@@ -10,7 +10,13 @@ let s = 0;
 if movetype = H && statetype = L {let s = 0.60;}
 else if movetype = H && statetype = A {let s = 0.30;}
 
+[Statedef -4]
+if stateno = 5900 && time = 0 {map(shadow_lc):=const240p(1);}
+
 [Statedef +1]
+
+	# stages can turn off all of this code at once
+if !stageconst(NoShadows) {
 
 	# vertical position, adjusted by localcoord
 let py = abs(pos y)/const240p(1);
@@ -26,6 +32,9 @@ let spr = call sprite();
 let d = 0.6;
 
 let za = camerazoom;
+	# accounts for localcoord discrepancies during custom states
+let loc = 1;
+if incustomstate {let loc = map(shadow_lc)/stateowner,const240p(1);}
 
 	# this controls the opacity of shadows
 let al = 80; # minimum alpha source
@@ -59,9 +68,6 @@ if teamside && $f && (ishelper || !numexplod(33333399)) {
 if $f = 0 {removeexplod{id:33333399}}
 if ishelper && (isasserted(nofg) || isasserted(nobg)) {removeexplod{id:33333399; redirectid:root,id;}}
 
-	# temporary workaround for localcoord discrepancies
-if incustomstate {removeexplod{id:33333399}}
-
 if numexplod(33333399) {
 	
 	if ishelper && !map(shadow_scale) {map(shadow_scale) := $d;}
@@ -70,10 +76,12 @@ if numexplod(33333399) {
 		id:33333399; 
 		postype:left;
 		scale:((.47 - (((.47/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .6)/$si * 2 * $sc * $za * (1+$spr), ((.3 - (((.3/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .8)/$si * 2 * $sc * $za;
-		pos:ceil((screenpos x)*$za), ceil((screenpos y - pos y)*$za);
+		pos:ceil((screenpos x)*$za*$loc), ceil((screenpos y - pos y)*$za*$loc);
 		trans:addalpha;
 		alpha:$al,256-$al;
 		}
 	}
 
 ignorehitpause {assertspecial{flag:noshadow;}}
+
+}
