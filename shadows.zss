@@ -10,42 +10,10 @@ let s = 0;
 if movetype = H && statetype = L {let s = 0.60;}
 else if movetype = H && statetype = A {let s = 0.30;}
 
-[Statedef -4]
-if stateno = 5900 && time = 0 {map(shadow_lc):=const240p(1);}
-
 [Statedef +1]
 
 	# stages can turn off all of this code at once
-if !stageconst(NoShadows) {
-
-	# vertical position, adjusted by localcoord
-let py = abs(pos y)/const240p(1);
-	# maximum height at which shadows won't grow any thinner or less solid
-let ht = 96;
-	# rough measure of the characters horizontal size, adjusted by localcoord
-let si = const240p(100.0)/(const(size.ground.back) + const(size.ground.front))*(const(size.xscale));
-	# character specific scaling factor, if defined
-let sc = cond(map(shadow_scale), map(shadow_scale), 1);
-	# checks if the shadow should be stretched to account for gethits
-let spr = call sprite();
-	# default scale for helper shadows
-let d = 0.6;
-
-let za = camerazoom;
-	# accounts for localcoord discrepancies during custom states
-let loc = 1;
-if incustomstate {let loc = map(shadow_lc)/stateowner,const240p(1);}
-
-	# this controls the opacity of shadows
-let al = 80; # minimum alpha source
-let ba = 192; # base shadow value at floor level
-	# scales shadow opacity based on height
-if $ba*(($ht-$py)/$ht) >= $al {let al = $ba*(($ht-$py)/$ht);}
-	# scales shadow opacity if the character's own transparency is higher
-if animframe(alphasource) < $al {let al = animframe(alphasource);}
-if animframe(alphadest) > (256-$al) {let al = 256-animframe(alphadest);}
-if alpha source < $al {let al = alpha source;}
-if alpha dest > (256-$al) {let al = 256-alpha dest;}
+if !stagevar(reflection.intensity) && !stageconst(NoShadows) {
 
 let f = call shadow();
 
@@ -65,13 +33,41 @@ if teamside && $f && (ishelper || !numexplod(33333399)) {
 	}
 	
 	# removes the shadow explod, if necessary
-if $f = 0 {removeexplod{id:33333399}}
-if ishelper && (isasserted(nofg) || isasserted(nobg)) {removeexplod{id:33333399; redirectid:root,id;}}
+if !$f {removeexplod{id:33333399}}
+if ishelper && (isasserted(nofg) || isasserted(nobg) || isasserted(globalnoshadow)) {removeexplod{id:33333399; redirectid:root,id;}}
 
+	# vertical position, adjusted by localcoord
+let py = abs(pos y)/const240p(1);
+	# maximum height at which shadows won't grow any thinner or less solid
+let ht = 96;
+	# rough measure of the characters horizontal size, adjusted by localcoord
+let si = const240p(100.0)/(const(size.ground.back) + const(size.ground.front))*(const(size.xscale));
+	# character specific scaling factor, if defined
+let sc = cond(map(shadow_scale), map(shadow_scale), 1);
+	# checks if the shadow should be stretched to account for gethits
+let spr = call sprite();
+	# default scale for helper shadows
+let d = 0.6;
+if ishelper && !map(shadow_scale) {map(shadow_scale) := $d;}
+	# zoom
+let za = camerazoom;
+	# accounts for localcoord discrepancies during custom states
+let loc = 1;
+if incustomstate {let loc = localcoord x/stateowner,localcoord x;}
+
+	# this controls the opacity of shadows
+let al = 80; # minimum alpha source
+let ba = 192; # base shadow value at floor level
+	# scales shadow opacity based on height
+if $ba*(($ht-$py)/$ht) >= $al {let al = $ba*(($ht-$py)/$ht);}
+	# scales shadow opacity if the character's own transparency is higher
+if animframe(alphasource) < $al {let al = animframe(alphasource);}
+if animframe(alphadest) > (256-$al) {let al = 256-animframe(alphadest);}
+if alpha source < $al {let al = alpha source;}
+if alpha dest > (256-$al) {let al = 256-alpha dest;}
+
+	# changes the size and transparency of shadows	
 if numexplod(33333399) {
-	
-	if ishelper && !map(shadow_scale) {map(shadow_scale) := $d;}
-	# changes the size and transparency of shadows
 	modifyexplod{
 		id:33333399; 
 		postype:left;
@@ -82,6 +78,6 @@ if numexplod(33333399) {
 		}
 	}
 
-ignorehitpause {assertspecial{flag:noshadow;}}
+ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0;}}
 
 }
