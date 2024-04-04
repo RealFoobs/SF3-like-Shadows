@@ -41,7 +41,7 @@ let py = abs(pos y)/const240p(1);
 	# maximum height at which shadows won't grow any thinner or less solid
 let ht = 96;
 	# rough measure of the characters horizontal size, adjusted by localcoord
-let si = const240p(100.0)/(const(size.ground.back) + const(size.ground.front))*(const(size.xscale));
+let si = const240p(100.0)/(const(size.ground.back) + const(size.ground.front))/const(size.xscale);
 	# character specific scaling factor, if defined
 let sc = cond(map(shadow_scale), map(shadow_scale), 1);
 	# checks if the shadow should be stretched to account for gethits
