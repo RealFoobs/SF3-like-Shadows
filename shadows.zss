@@ -78,6 +78,6 @@ if numexplod(33333399) {
 		}
 	}
 
-ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0;}}
+ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0; shadow.color:0,0,0;}}
 
 }
