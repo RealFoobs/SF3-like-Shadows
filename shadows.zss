@@ -7,8 +7,8 @@ if anim != -2 && !isasserted(invisible) && !isasserted(noshadow) && !isasserted(
 
 [function sprite()s]
 let s = 0;
-if movetype = H && statetype = L {let s = 0.60;}
-else if movetype = H && statetype = A {let s = 0.30;}
+if (movetype = H && statetype = L) || (animframe(group) = [5030,5032] && animframe(image) = [20,40]) || (animframe(group) = [5040,5042] && animframe(image) = [0,20]) || (animframe(group) = [5070,5072] && animframe(image) = [10,20]) {let s = 0.60;}
+else if (movetype = H && statetype = A) || (animframe(group) = [5030,5032] && animframe(image) = [0,10]) || (animframe(group) = [5030,5032] && animframe(image) = 50) || (animframe(group) = [5070,5072] && animframe(image) = [0,10]) {let s = 0.30;}
 
 [Statedef +1]
 
@@ -23,6 +23,7 @@ if teamside && $f && (ishelper || !numexplod(33333399)) {
 	id:33333399;
 	anim:ZH 8530; 
 	postype:left; 
+	space:stage;
 	ownpal:1;
 	removetime:cond(ishelper, 1, -1);
 	supermovetime:100000;
@@ -70,14 +71,15 @@ if alpha dest > (256-$al) {let al = 256-alpha dest;}
 if numexplod(33333399) {
 	modifyexplod{
 		id:33333399; 
+		space:stage;
 		postype:left;
 		scale:((.47 - (((.47/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .6)/$si * 2 * $sc * $za * (1+$spr), ((.3 - (((.3/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .8)/$si * 2 * $sc * $za;
-		pos:ceil((screenpos x)*$za*$loc), ceil((screenpos y - pos y)*$za*$loc);
+		pos:ceil(screenpos x * $za * $loc), 0;
 		trans:addalpha;
 		alpha:$al,256-$al;
 		}
 	}
 
-ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0; shadow.color:0,0,0;}}
-
+#ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0; shadow.color:0,0,0;}}
+ignorehitpause {assertspecial{flag:noshadow;}}
 }
