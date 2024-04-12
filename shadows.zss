@@ -88,6 +88,7 @@ if numexplod(33333399) {
 		space:stage;
 		postype:left;
 		scale:(2.1-1.2/$fh)/$si*$sc*(1+$gh)*(1/$qu), (2-0.6/$fh)/$si*$sc*(1/$qu);
+		pos:ceil(screenpos x*camerazoom*$loc), 0;
 		trans:addalpha;
 		alpha:$al,256-$al;
 		}
