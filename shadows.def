@@ -1,6 +1,6 @@
 [Info]
 prefix = ZH
-fx.scale = 1; 1
+localcoord = 320,240
 
 [Files]
 sff = shadows.sff

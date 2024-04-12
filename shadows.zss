@@ -12,16 +12,30 @@ else if (movetype = H && statetype = A) || (animframe(group) = [5030,5032] && an
 
 [Statedef +1]
 
+	# Shadow Quality
+	# 1 - Normal
+	# 2 - high (default)
+	# 3 - Ultra
+	# 4 - Adaptative (based on stage)
+	
+map(shadow_quality):= 2;
+
 	# stages can turn off all of this code at once
 if !stagevar(reflection.intensity) && !stageconst(NoShadows) {
 
 let f = call shadow();
 
+switch map(shadow_quality) {
+	case 1: let qu = 1.0;
+	case 3: let qu = 4.0;
+	case 4: let qu = 1.0*stagevar(stageinfo.localcoord.x)/320;
+	default: let qu = 2.0;
+	}
 	# shadow explod
 if teamside && $f && (ishelper || !numexplod(33333399)) {
 	explod{
 	id:33333399;
-	anim:ZH 8530; 
+	anim:ZH 8530+$qu; 
 	postype:left; 
 	space:stage;
 	ownpal:1;
@@ -41,17 +55,17 @@ if ishelper && (isasserted(nofg) || isasserted(nobg) || isasserted(globalnoshado
 let py = abs(pos y)/const240p(1);
 	# maximum height at which shadows won't grow any thinner or less solid
 let ht = 96;
+	# final height comparison
+let fh = $ht/cond($py+.0001 < $ht, $py+.00001, $ht);
 	# rough measure of the characters horizontal size, adjusted by localcoord
 let si = const240p(100.0)/(const(size.ground.back) + const(size.ground.front))/const(size.xscale);
 	# character specific scaling factor, if defined
 let sc = cond(map(shadow_scale), map(shadow_scale), 1);
 	# checks if the shadow should be stretched to account for gethits
-let spr = call sprite();
+let gh = call sprite();
 	# default scale for helper shadows
 let d = 0.6;
 if ishelper && !map(shadow_scale) {map(shadow_scale) := $d;}
-	# zoom
-let za = camerazoom;
 	# accounts for localcoord discrepancies during custom states
 let loc = 1;
 if incustomstate {let loc = localcoord x/stateowner,localcoord x;}
@@ -73,8 +87,7 @@ if numexplod(33333399) {
 		id:33333399; 
 		space:stage;
 		postype:left;
-		scale:((.47 - (((.47/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .6)/$si * 2 * $sc * $za * (1+$spr), ((.3 - (((.3/($ht/cond($py+.0001 < $ht, $py+.00001, $ht)))))) + .8)/$si * 2 * $sc * $za;
-		pos:ceil(screenpos x * $za * $loc), 0;
+		scale:(2.1-1.2/$fh)/$si*$sc*(1+$gh)*(1/$qu), (2-0.6/$fh)/$si*$sc*(1/$qu);
 		trans:addalpha;
 		alpha:$al,256-$al;
 		}
