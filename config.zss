@@ -1,0 +1,19 @@
+[Statedef -4]
+ignorehitpause if !roundstate && teamside {
+
+	# Shadow Quality: 1 - Normal; 2 - high (default); 3 - Ultra; 4 - Adaptative (based on stage)
+	map(shadow_quality):= 2;
+	
+	# Maximum shadow intensity at floor level. 
+	# The default mugen stage has a shadow intensity value of 128, so this is 192 under normal conditions. 
+	map(shadow_max):= stagevar(shadow.intensity)+64;
+	
+	# Minimum shadow intensity while high in the air.
+	# The default mugen stage has a shadow intensity value of 128, so this is 80 under normal conditions.
+	map(shadow_min):= stagevar(shadow.intensity)-48;
+	
+	# Turns off the shadow system. Use this for stages in which shadows just don't make sense.
+	# Shadows are already automatically disabled for stages with reflection.
+	map(shadow_off):=0;
+	
+	}

@@ -12,27 +12,25 @@ else if (movetype = H && statetype = A) || (animframe(group) = [5030,5032] && an
 
 [Statedef +1]
 
-	# Shadow Quality
-	# 1 - Normal
-	# 2 - high (default)
-	# 3 - Ultra
-	# 4 - Adaptative (based on stage)
-	
-map(shadow_quality):= 2;
-
 	# stages can turn off all of this code at once
-if !stagevar(reflection.intensity) && !stageconst(NoShadows) {
+if !stagevar(reflection.intensity) && map(shadow_off) = 0 {
 
 let f = call shadow();
 
 switch map(shadow_quality) {
-	case 1: let qu = 1.0;
-	case 3: let qu = 4.0;
-	case 4: let qu = 1.0*stagevar(stageinfo.localcoord.x)/320;
-	default: let qu = 2.0;
+	case 1: let qu = 1;
+	case 3: let qu = 4;
+	case 4: let qu = stagevar(stageinfo.localcoord.x)/320;
+	default: let qu = 2;
 	}
 	# shadow explod
+
 if teamside && $f && (ishelper || !numexplod(33333399)) {
+	
+	let red = stagevar(shadow.color.r);
+	let grn = stagevar(shadow.color.g);
+	let blu = stagevar(shadow.color.b);
+	
 	explod{
 	id:33333399;
 	anim:ZH 8530+$qu; 
@@ -44,9 +42,11 @@ if teamside && $f && (ishelper || !numexplod(33333399)) {
 	pausemovetime:100000;
 	sprpriority:-6001;
 	ignorehitpause:1;
+	palfx.time:-1;
+	palfx.add:($grn+$blu),($red+$blu),($red+$grn);
+	palfx.mul:256,256,256
 		}
-	}
-	
+}
 	# removes the shadow explod, if necessary
 if !$f {removeexplod{id:33333399}}
 if ishelper && (isasserted(nofg) || isasserted(nobg) || isasserted(globalnoshadow)) {removeexplod{id:33333399; redirectid:root,id;}}
@@ -71,8 +71,8 @@ let loc = 1;
 if incustomstate {let loc = localcoord x/stateowner,localcoord x;}
 
 	# this controls the opacity of shadows
-let al = 80; # minimum alpha source
-let ba = 192; # base shadow value at floor level
+let al = map(shadow_min); # minimum alpha source
+let ba = map(shadow_max); # base shadow value at floor level
 	# scales shadow opacity based on height
 if $ba*(($ht-$py)/$ht) >= $al {let al = $ba*(($ht-$py)/$ht);}
 	# scales shadow opacity if the character's own transparency is higher
@@ -87,7 +87,7 @@ if numexplod(33333399) {
 		id:33333399; 
 		space:stage;
 		postype:left;
-		scale:(2.1-1.2/$fh)/$si*$sc*(1+$gh)*(1/$qu), (2-0.6/$fh)/$si*$sc*(1/$qu);
+		scale:(2.6-1.5/$fh)/$si*$sc*(1.0/$qu)*(1+$gh), (2-0.7/$fh)/$si*$sc*(1.0/$qu);
 		pos:ceil(screenpos x*camerazoom*$loc), 0;
 		trans:addalpha;
 		alpha:$al,256-$al;
