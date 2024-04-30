@@ -35,10 +35,15 @@ You just need to add my files so the engine can read them:
 		"data/score.zss",
 		"data/tag.zss",
 		"data/training.zss",
+		"data/shadows/config.zss",
 		"data/shadows/shadows.zss"
 	],
   ```
 The order isn't very relevant, just make sure to include a comma if either file is NOT the last the last line on the block, and to ommit it if it isn't.
+
+**Config Options**
+
+TBD
 
 **Adjusting Characters**
 
