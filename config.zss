@@ -12,8 +12,4 @@ ignorehitpause if !roundstate && teamside {
 	# The default mugen stage has a shadow intensity value of 128, so this is 80 under normal conditions.
 	map(shadow_min):= stagevar(shadow.intensity)-48;
 	
-	# Turns off the shadow system. Use this for stages in which shadows just don't make sense.
-	# Shadows are already automatically disabled for stages with reflection.
-	map(shadow_off):=0;
-	
 	}

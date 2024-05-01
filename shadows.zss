@@ -13,7 +13,7 @@ else if (movetype = H && statetype = A) || (animframe(group) = [5030,5032] && an
 [Statedef +1]
 
 	# stages can turn off all of this code at once
-if !stagevar(reflection.intensity) && map(shadow_off) = 0 {
+if !stagevar(reflection.intensity) && !stageconst(NoShadows) {
 
 let f = call shadow();
 
@@ -71,8 +71,8 @@ let loc = 1;
 if incustomstate {let loc = localcoord x/stateowner,localcoord x;}
 
 	# this controls the opacity of shadows
-let al = map(shadow_min); # minimum alpha source
-let ba = map(shadow_max); # base shadow value at floor level
+let al = cond(!ishelper, map(shadow_min), root,map(shadow_min)); # minimum alpha source
+let ba = cond(!ishelper, map(shadow_max), root,map(shadow_max)); # base shadow value at floor level
 	# scales shadow opacity based on height
 if $ba*(($ht-$py)/$ht) >= $al {let al = $ba*(($ht-$py)/$ht);}
 	# scales shadow opacity if the character's own transparency is higher
