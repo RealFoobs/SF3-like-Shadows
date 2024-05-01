@@ -1,4 +1,4 @@
-A system to replace Ikemen's default shadows for rounder shadows similar to those present in Capcom games like SFIII. This is based of MFG user [inktrebuchet's mugen code](https://mugenguild.com/forum/topics/round-shadows-based-sf3-198646.0.html).
+A system to replace Ikemen's default shadows for rounder shadows similar to those present in Capcom games like SFIII and MvC1. This is based of MFG user [inktrebuchet's mugen code](https://mugenguild.com/forum/topics/round-shadows-based-sf3-198646.0.html).
 
 **To install**
 
@@ -43,7 +43,28 @@ The order isn't very relevant, just make sure to include a comma if either file 
 
 **Config Options**
 
-TBD
+Config.zss includes a few settings you can tweak. Be careful not to delete the semicolon on these.
+
+- ```map(shadow_quality):= 2;```
+
+Controls the resolution of the shadow sprites. By defaults it is set to 2, the shadow sprite is the size you'd expect in a 480p game. 1 is low res (240p), 3 is high definition (720p) and 4 is a special, adaptative value. With 4 the shadow sprites will adapt to the localcoord of the stage (defaulting to 240p if undefined) so shadows will never be mismatched in resolution to the stage.
+
+- ```map(shadow_max):= stagevar(shadow.intensity)+64;```
+
+This daunting-looking expression controls the maximum intensity of the shadows (i.e. when the character is at floor level). It's expressed in the terms of shadow.intensty, because stages themselves define how dark their shadows should be (even though most creators use the default values), and the system tries to follow their same rules. You can change this to a single static value if you want; the default mugen stage uses an intensity of 128, so 128+64 = 192.
+
+- ```map(shadow_min):= stagevar(shadow.intensity)-48;```
+
+This other expression controls the minimum intensity of the shadows (i.e. when the character is high up in the air). You can also change it to a single static value, even the same as max intensity if you don't care for the fading effect. The default value is equivalent to 128-48=80.
+
+**Adjusting Stages**
+
+Shadows are automatically hidden on any stage that has reflection declared (mixing shadows and reflections is bad form!). If you wish to disable it for any specific stage because the shadows are ill-fitting, you can do it by opening the stage's def file and include the following section after [Infp]:
+
+```
+[Constants]
+NoShadows = 1
+```
 
 **Adjusting Characters**
 
