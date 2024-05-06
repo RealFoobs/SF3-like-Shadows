@@ -23,13 +23,18 @@ switch map(shadow_quality) {
 	case 4: let qu = stagevar(stageinfo.localcoord.x)/320;
 	default: let qu = 2;
 	}
-	# shadow explod
-
-if teamside && $f && (ishelper || !numexplod(33333399)) {
 	
-	let red = stagevar(shadow.color.r);
-	let grn = stagevar(shadow.color.g);
-	let blu = stagevar(shadow.color.b);
+	if !stagevar(shadow.intensity) && map(shadow_max) < 128 {
+		map(shadow_max):=192;
+		map(shadow_min):=80;
+		}
+	let R = stagevar(shadow.color.r);
+	let G = stagevar(shadow.color.g);
+	let B = stagevar(shadow.color.b);
+	
+	# shadow explod
+	
+if teamside && $f && (ishelper || !numexplod(33333399)) {
 	
 	explod{
 	id:33333399;
@@ -43,8 +48,8 @@ if teamside && $f && (ishelper || !numexplod(33333399)) {
 	sprpriority:-6001;
 	ignorehitpause:1;
 	palfx.time:-1;
-	palfx.add:($grn+$blu),($red+$blu),($red+$grn);
-	palfx.mul:256,256,256
+	palfx.add:-$R+($G+$B)/2, -$G+($R+$B)/2, -$B+($R+$G)/2; 
+	palfx.mul:128+stagevar(shadow.intensity),128+stagevar(shadow.intensity),128+stagevar(shadow.intensity);
 		}
 }
 	# removes the shadow explod, if necessary
@@ -97,3 +102,10 @@ if numexplod(33333399) {
 #ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0; shadow.color:0,0,0;}}
 ignorehitpause {assertspecial{flag:noshadow;}}
 }
+	# debug features, may look off because of font differences.
+	
+#	ignorehitpause if !ishelper && playerno = 1 {
+#		text{removetime:1; layerno:1; pos:50,100;text:"Stage shadow intensity %d";params:stagevar(shadow.intensity);}
+#		text{removetime:1; layerno:1; pos:50,120;text:"Explod shadow intensity %f";params:map(shadow_max);}
+#		text{removetime:1; layerno:1; pos:50,140;text:"R: %d, G: %i , B: %v";params:-$R+($G+$B)/2, -$G+($R+$B)/2,-$B+($R+$G)/2;}
+#		}
