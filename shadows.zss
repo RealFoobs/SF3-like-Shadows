@@ -9,7 +9,7 @@ if anim != -2 && !isasserted(invisible) && !isasserted(noshadow) && !isasserted(
 let s = 0;
 if (movetype = H && statetype = L) || (animframe(group) = [5030,5032] && animframe(image) = [20,40]) || (animframe(group) = [5040,5042] && animframe(image) = [0,20]) || (animframe(group) = [5070,5072] && animframe(image) = [10,20]) {let s = 0.60;}
 else if (movetype = H && statetype = A) || (animframe(group) = [5030,5032] && animframe(image) = [0,10]) || (animframe(group) = [5030,5032] && animframe(image) = 50) || (animframe(group) = [5070,5072] && animframe(image) = [0,10]) {let s = 0.30;}
-
+	
 [Statedef +1]
 
 	# stages can turn off all of this code at once
@@ -58,7 +58,7 @@ if !$f {removeexplod{id:33333399}}
 if ishelper && (isasserted(nofg) || isasserted(nobg) || isasserted(globalnoshadow)) {removeexplod{id:33333399; redirectid:root,id;}}
 
 	# vertical position, adjusted by localcoord
-let py = abs(pos y)/const240p(1);
+let py = abs(pos y + groundlevel)/const240p(1);
 	# maximum height at which shadows won't grow any thinner or less solid
 let ht = 96;
 	# final height comparison
@@ -102,4 +102,5 @@ if numexplod(33333399) {
 
 #ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0; shadow.color:0,0,0;}}
 ignorehitpause {assertspecial{flag:noshadow;}}
+
 }
