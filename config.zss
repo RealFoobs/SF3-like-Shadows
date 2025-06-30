@@ -2,7 +2,7 @@
 ignorehitpause if !roundstate && teamside {
 
 	# Shadow Quality: 1 - Normal; 2 - high (default); 3 - Ultra; 4 - Adaptative (based on stage)
-	map(shadow_quality):= 2;
+	map(shadow_quality):= 3;
 	
 	# Maximum shadow intensity at floor level. 
 	# The default mugen stage has a shadow intensity value of 128, so this is 192 under normal conditions. 
