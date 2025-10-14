@@ -24,10 +24,11 @@ switch map(shadow_quality) {
 	default: let qu = 2;
 	}
 		
-	if !stagevar(shadow.intensity) && map(shadow_max) < 128 {
+	# stagevar triggers might be broken, disabling the check for now
+	#if !stagevar(shadow.intensity) && map(shadow_max) < 128 {
 		map(shadow_max):=192;
 		map(shadow_min):=80;
-		}
+	#	}
 		
 	let R = stagevar(shadow.color.r);
 	let G = stagevar(shadow.color.g);
@@ -36,14 +37,14 @@ switch map(shadow_quality) {
 	# shadow explod
 	
 if teamside && $f && (ishelper || !numexplod(33333399)) {
-	
+
 	explod{
 		id:33333399;
 		anim:ZH 8530+$qu;
 		postype: left;
 		space: stage;
 		ownpal:1;
-		removetime:(ishelper||-1);
+		removetime:(ishelper||incustomstate||-1);
 		supermovetime:100000;
 		pausemovetime:100000;
 		sprpriority:-6001;
@@ -73,7 +74,7 @@ let gh = call sprite();
 let d = 0.6;
 if ishelper && !map(shadow_scale) {map(shadow_scale) := $d;}
 	# accounts for localcoord discrepancies during custom states
-let loc = cond(incustomstate,localcoord x/stateowner, localcoord x, 1);
+let loc = cond(incustomstate, localcoord x/stateowner,localcoord x, 1);
 
 	# this controls the opacity of shadows
 let al = (map(shadow_min)||root,map(shadow_min)); # minimum alpha source
@@ -99,7 +100,7 @@ if numexplod(33333399) {
 		}
 	}
 
-#ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0; shadow.color:0,0,0;}}
+ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0; shadow.color:0,0,0;}}
 ignorehitpause {assertspecial{flag:noshadow;}}
 
 	# not for attachedchars 
@@ -111,7 +112,7 @@ ignorehitpause if teamside && !ishelper {
 		let f = 2;
 		let g = 72;
 
-		text{removetime:1; layerno:1; pos:$f,$g+playerno*12;text:"GROUNDLEVEL  = %v";params:groundlevel;}
+		text{removetime:1; layerno:1; pos:$f,$g+playerno*12;text:"LOC  = %v";params:$loc;}
 		}
 	}
 }
