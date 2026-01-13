@@ -9,13 +9,21 @@ if anim != -2 && !isasserted(invisible) && !isasserted(noshadow) && !isasserted(
 let s = 0;
 if (movetype = H && statetype = L) || (animelemvar(group) = [5030,5032] && animelemvar(image) = [20,40]) || (animelemvar(group) = [5040,5042] && animelemvar(image) = [0,20]) || (animelemvar(group) = [5070,5072] && animelemvar(image) = [10,20]) {let s = 0.60;}
 else if (movetype = H && statetype = A) || (animelemvar(group) = [5030,5032] && animelemvar(image) = [0,10]) || (animelemvar(group) = [5030,5032] && animelemvar(image) = 50) || (animelemvar(group) = [5070,5072] && animelemvar(image) = [0,10]) {let s = 0.30;}
-	
+
+[Statedef -4]
+let f = call shadow();
+	# removes the shadow explod, if necessary
+ignorehitpause if teamside{
+		if !$f {removeexplod{id:33333399}}
+		if ishelper && (isasserted(nofg) || isasserted(nobg) || isasserted(globalnoshadow)) {removeexplod{id:33333399; redirectid:root,id;}}
+		}
+
 [Statedef +1]
 
-	# stages can turn off all of this code at once
-if !stagevar(reflection.intensity) && !stageconst(NoShadows) {
-
 let f = call shadow();
+
+	# stages can ignore all of this code at once
+ignorehitpause if teamside && !stagevar(reflection.intensity) && !stageconst(NoShadows) {
 
 switch map(shadow_quality) {
 	case 1: let qu = 1;
@@ -24,19 +32,18 @@ switch map(shadow_quality) {
 	default: let qu = 2;
 	}
 		
-	# stagevar triggers might be broken, disabling the check for now
-	#if !stagevar(shadow.intensity) && map(shadow_max) < 128 {
+	# check each stage's own shadow parameters
+	if !stagevar(shadow.intensity) && map(shadow_max) < 128 {
 		map(shadow_max):=192;
 		map(shadow_min):=80;
-	#	}
+		}
 		
 	let R = stagevar(shadow.color.r);
 	let G = stagevar(shadow.color.g);
 	let B = stagevar(shadow.color.b);
 	
-	# shadow explod
-	
-if teamside && $f && (ishelper || !numexplod(33333399)) {
+	# base shadow explod
+ignorehitpause if $f && (ishelper || !numexplod(33333399)) {
 
 	explod{
 		id:33333399;
@@ -49,14 +56,8 @@ if teamside && $f && (ishelper || !numexplod(33333399)) {
 		pausemovetime:100000;
 		sprpriority:-6001;
 		ignorehitpause:1;
-		palfx.time:-1;
-		palfx.add:-$R+($G+$B)/2, -$G+($R+$B)/2, -$B+($R+$G)/2;
-		palfx.mul:128+stagevar(shadow.intensity),128+stagevar(shadow.intensity),128+stagevar(shadow.intensity);
 		}
-}
-	# removes the shadow explod, if necessary
-if !$f {removeexplod{id:33333399}}
-if ishelper && (isasserted(nofg) || isasserted(nobg) || isasserted(globalnoshadow)) {removeexplod{id:33333399; redirectid:root,id;}}
+	}
 
 	# vertical position, adjusted by localcoord
 let py = abs(pos y + groundlevel)/const240p(1);
@@ -87,8 +88,8 @@ if animelemvar(alphadest) > (256-$al) {let al = 256-animelemvar(alphadest);}
 if alpha source < $al {let al = alpha source;}
 if alpha dest > (256-$al) {let al = 256-alpha dest;}
 
-	# changes the size and transparency of shadows	
-if numexplod(33333399) {
+	# changes the size and transparency of shadows
+ignorehitpause if numexplod(33333399) {
 	modifyexplod{
 		id:33333399;
 		postype: left;
@@ -97,22 +98,18 @@ if numexplod(33333399) {
 		pos:ceil(screenpos x*camerazoom*$loc), 0;
 		trans:addalpha;
 		alpha:$al,256-$al;
+		palfx.time:-1;
+		palfx.add:-$R+($G+$B)/2, -$G+($R+$B)/2, -$B+($R+$G)/2;
+		palfx.mul:128+stagevar(shadow.intensity),128+stagevar(shadow.intensity),128+stagevar(shadow.intensity);
 		}
 	}
 
-ignorehitpause if fighttime > 0 {modifystagevar{shadow.intensity:0; shadow.color:0,0,0;}}
-ignorehitpause {assertspecial{flag:noshadow;}}
-
-	# not for attachedchars 
-ignorehitpause if teamside && !ishelper {
-		
-	# debug features, may look off because of font differences.
-	if 0 {
-		assertspecial{flag:nobardisplay}
-		let f = 2;
-		let g = 72;
-
-		text{removetime:1; layerno:1; pos:$f,$g+playerno*12;text:"LOC  = %v";params:$loc;}
+	# removes the shadow explod, if necessary
+ignorehitpause if teamside{
+		if !$f {removeexplod{id:33333399}}
+		if ishelper && (isasserted(nofg) || isasserted(nobg) || isasserted(globalnoshadow)) {removeexplod{id:33333399; redirectid:root,id;}}
 		}
-	}
+
+assertspecial{flag:noshadow;}
+
 }
